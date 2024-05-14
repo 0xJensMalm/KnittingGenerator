@@ -1,18 +1,22 @@
 function generateGrid(cols, rows) {
-  let cellSize = Math.min(width / cols, height / rows); // Ensures cells remain square
+  let cellSize = Math.min(width / cols, height / rows);
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
-      stroke(0); // Grid lines color
-      fill(255); // Cell color
+      stroke(0);
+      fill(255);
       rect(i * cellSize, j * cellSize, cellSize, cellSize);
     }
   }
 }
 
 const patternClasses = {
-  "13x13": ThirteenSQ,
+  "14x14": Fourteen,
+  "13x13": Thirteen,
+  "12x12": Twelwe,
   "4x4": FourByFourPattern,
+  "5x5": FiveByFive,
   "6x6": SixBySixPattern,
+  "7x7": SevenBySeven,
   "2x2": TwoByTwoPattern,
   "3x3": ThreeByThree,
 };
@@ -76,9 +80,9 @@ function calculateSections(size, availablePatterns) {
 }
 
 function fetchPatterns(cols, rows) {
-  let cellSize = Math.min(width / cols, height / rows); // Consistent with generateGrid
-  let colSections = calculateSections(cols, patternClasses); // Calculate for columns
-  let rowSections = calculateSections(rows, patternClasses); // Calculate for rows
+  let cellSize = Math.min(width / cols, height / rows);
+  let colSections = calculateSections(cols, patternClasses);
+  let rowSections = calculateSections(rows, patternClasses);
 
   for (let colSection of colSections) {
     for (let rowSection of rowSections) {
@@ -89,10 +93,9 @@ function fetchPatterns(cols, rows) {
         : "blank";
 
       if (patternType !== "blank") {
-        let PatternClass =
-          patternClasses[
-            patternType.split("x")[0] + "x" + patternType.split("x")[0]
-          ];
+        let patternKey =
+          patternType.split("x")[0] + "x" + patternType.split("x")[0];
+        let PatternClass = patternClasses[patternKey];
         if (PatternClass) {
           let pattern = new PatternClass();
           let x = colSection.start * cellSize;
@@ -100,6 +103,8 @@ function fetchPatterns(cols, rows) {
           let w = (colSection.end - colSection.start) * cellSize;
           let h = (rowSection.end - rowSection.start) * cellSize;
           pattern.draw(x, y, w, h);
+        } else {
+          console.error("Pattern class not found for key:", patternKey);
         }
       }
     }
@@ -113,6 +118,6 @@ function setup() {
 
 function draw() {
   background(225); // Light grey background
-  generateGrid(200, 200); // Generates the grid for patterns
-  fetchPatterns(200, 200); // Draws patterns within the generated grid
+  generateGrid(160, 160); // Generates the grid for patterns
+  fetchPatterns(160, 160); // Draws patterns within the generated grid
 }
